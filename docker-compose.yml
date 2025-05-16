@@ -1,0 +1,14 @@
+version: "3.8"
+
+services:
+  image-api:
+    image: image-api
+    build: .
+    environment:
+      - SERVER_PORT=9090
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./uploads:/app/uploads # Para persistir las imágenes subidas
+      - ./temp:/app/temp
+    restart: unless-stopped
