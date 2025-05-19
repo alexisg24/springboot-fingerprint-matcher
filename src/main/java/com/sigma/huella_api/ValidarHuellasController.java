@@ -36,8 +36,6 @@ public class ValidarHuellasController {
             if (!Files.exists(huellaRegistradaPath)) {
                 return ResponseEntity.badRequest().body(new ApiResponse(false, "No existe huella registrada para este usuario"));
             }
-
-            // 4. Comparar huellas
             boolean coinciden = compararHuellas(tempFilePath, huellaRegistradaPath.toString());
             Files.deleteIfExists(Paths.get(tempFilePath));
             String result = coinciden ? "Huellas coinciden" : "Huellas no coinciden";
