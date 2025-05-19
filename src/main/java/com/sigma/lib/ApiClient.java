@@ -30,7 +30,6 @@ public class ApiClient {
 
     public String getTokenBasedInUserName(String userName) {
     try {
-        System.out.println("key: " + this.dotenv.get("secretKey"));
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
 
