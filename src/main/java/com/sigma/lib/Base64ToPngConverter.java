@@ -2,7 +2,9 @@ package com.sigma.lib;
 
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Component;
+import org.apache.commons.io.FileUtils;
 
+import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -16,22 +18,48 @@ public class Base64ToPngConverter {
 
     private static final String BASE64_PREFIX = "data:image/png;base64,";
 
-    public String convertToPngFile(String base64Image, String outputDir, String fileName) throws IOException {
-        // Validaciones básicas
-        validateInputs(base64Image, outputDir, fileName);
+    public void convertMultipleToPngFiles(String[] base64Images, String outputDir, String userId) throws IOException {
+        validateInputsForMultiple(base64Images, outputDir, userId);
+        Path userDir = prepareOutputDirectory(outputDir).resolve(sanitizeFilename(userId));
+        if (Files.exists(userDir)) {
+            FileUtils.forceDelete(new File(userDir.toString()));
+        }
+        Files.createDirectories(userDir);
 
-        // Preparar directorio de salida
+        for (String base64Image : base64Images) {
+            if (StringUtils.isNotBlank(base64Image)) {
+                String imageData = extractBase64Data(base64Image);
+                byte[] imageBytes = decodeBase64(imageData);
+                String randomName = UUID.randomUUID().toString();
+                String filePath = userDir.resolve(randomName + ".png").toString();
+
+                writeImageFile(filePath, imageBytes);
+            }
+        }
+    }
+
+    private void validateInputsForMultiple(String[] base64Images, String outputDir, String userId) {
+        if (base64Images == null || base64Images.length == 0) {
+            throw new IllegalArgumentException("El array de imágenes Base64 no puede estar vacío");
+        }
+        if (StringUtils.isBlank(outputDir)) {
+            throw new IllegalArgumentException("El directorio de salida no puede estar vacío");
+        }
+        if (StringUtils.isBlank(userId)) {
+            throw new IllegalArgumentException("El ID de usuario no puede estar vacío");
+        }
+    }
+
+    public String convertToPngFile(String base64Image, String outputDir, String fileName) throws IOException {
+        validateInputs(base64Image, outputDir, fileName);
         Path uploadPath = prepareOutputDirectory(outputDir);
 
-        // Procesar y validar Base64
         String imageData = extractBase64Data(base64Image);
         byte[] imageBytes = decodeBase64(imageData);
 
-        // Generar nombre de archivo seguro
         String safeFileName = sanitizeFilename(fileName);
         String filePath = uploadPath.resolve(safeFileName + ".png").toString();
 
-        // Escribir archivo
         writeImageFile(filePath, imageBytes);
 
         return filePath;
@@ -58,12 +86,10 @@ public class Base64ToPngConverter {
     }
 
     private String extractBase64Data(String base64Image) {
-        // Manejar tanto con prefijo como sin él
         String imageData = base64Image.startsWith(BASE64_PREFIX) 
             ? base64Image.substring(BASE64_PREFIX.length())
             : base64Image;
 
-        // Eliminar posibles espacios en blanco o saltos de línea
         imageData = imageData.replaceAll("\\s", "");
 
         if (StringUtils.isBlank(imageData)) {
@@ -75,7 +101,6 @@ public class Base64ToPngConverter {
 
     private byte[] decodeBase64(String base64Data) {
         try {
-            // Asegurar el padding correcto
             int padding = base64Data.length() % 4;
             if (padding > 0) {
                 base64Data += "===".substring(0, 4 - padding);
@@ -88,7 +113,6 @@ public class Base64ToPngConverter {
     }
 
     private String sanitizeFilename(String fileName) {
-        // Reemplazar caracteres no seguros
         return fileName.replaceAll("[^a-zA-Z0-9.-]", "_");
     }
 
