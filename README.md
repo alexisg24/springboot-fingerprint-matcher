@@ -41,3 +41,9 @@ fingerprint -> base64 de la captura
   "message": "string"
 }
 ```
+
+### Iniciar proyecto
+
+- Crear archivo `.env` con el secreto que comparte el sistema con la api
+- Utilizar docker para la build o el docker compose con los puertos que se quieran exponer
+- Si no se usa Docker asegurarse de tener instalado Maven y Java 17+
