@@ -2,8 +2,8 @@ services:
   image-api:
     image: image-api
     build: .
-    environment:
-      - SERVER_PORT=9090
+    env_file:
+      - .env
     ports:
       - "9090:9090"
     volumes:
