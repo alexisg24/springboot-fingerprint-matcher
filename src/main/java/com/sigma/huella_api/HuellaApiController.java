@@ -20,6 +20,7 @@ public class HuellaApiController {
     private static final String UPLOAD_DIR = "uploads/";
     private Base64ToPngConverter base64Converter = new Base64ToPngConverter();
 
+    @CrossOrigin(origins = "*")
     @PostMapping("/registrar")
     public ResponseEntity<ApiResponse> uploadImage(
             @RequestParam("fingerprint[]") String[] base64,

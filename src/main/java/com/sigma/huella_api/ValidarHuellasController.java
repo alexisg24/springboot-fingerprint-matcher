@@ -29,6 +29,7 @@ public class ValidarHuellasController {
     private Base64ToPngConverter base64Converter = new Base64ToPngConverter();
     private ApiClient apiClient = new ApiClient("https://demo.getsigmacare.com/develop");
 
+    @CrossOrigin(origins = "*")
     @PostMapping("/validar")
     public ResponseEntity<ApiResponse> validarHuella(
             @RequestParam("fingerprint") String base64,
