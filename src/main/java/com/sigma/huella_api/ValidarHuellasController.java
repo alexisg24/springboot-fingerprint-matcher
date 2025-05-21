@@ -22,7 +22,6 @@ import java.util.stream.Stream;
 
 @RestController
 @RequestMapping("/api/huellas")
-@CrossOrigin(origins = "*")
 public class ValidarHuellasController {
 
     private String TEMP_DIR = "temp/";

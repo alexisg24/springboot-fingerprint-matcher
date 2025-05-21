@@ -16,7 +16,6 @@ import java.io.IOException;
 
 @RestController
 @RequestMapping("/api/huellas")
-@CrossOrigin(origins = "*")
 public class HuellaApiController {
     private static final String UPLOAD_DIR = "uploads/";
     private Base64ToPngConverter base64Converter = new Base64ToPngConverter();
